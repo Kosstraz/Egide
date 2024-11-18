@@ -222,7 +222,7 @@ public:
 	void operator ()() const noexcept;
 
 private:
-	std::function<void()>	lambda;
+	std::function<void()>	lambda; //replace by letf, later
 };
 
 #pragma endregion
