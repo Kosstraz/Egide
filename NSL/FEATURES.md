@@ -6,7 +6,7 @@ letc
 Callable
 letv
 Signal
-Function --> accepte lambda
+Function --> accepte lambda \n
 Thread constructeur Callable
 Unpack::Apply --> refactor + change name (::Do before)
 Unpack::Bind --> Callable
