@@ -26,21 +26,25 @@ SRCS =	./env/NSLSIMDplatform.cpp				\
 		./env/srcs/private/String.cpp			\
 		./env/srcs/private/IOStream.cpp			\
 		./env/srcs/private/Pool.cpp				\
+		./env/srcs/private/Sleep.cpp			\
 		./env/srcs/private/Mutex.cpp			\
 		./env/srcs/private/MutexStrict.cpp		\
+		./env/srcs/private/MutexRecursive.cpp	\
 		./env/srcs/private/Barrier.cpp			\
 		./env/srcs/private/ManagedBarrier.cpp	\
 		./env/srcs/private/Async.cpp			\
 		./env/srcs/private/Thread.cpp			\
+		./env/srcs/private/ThreadQueue.cpp		\
 		./env/srcs/private/Channel.cpp			\
 		./env/srcs/private/MultiThreading.cpp	\
 		./env/srcs/private/Vector3d.cpp			\
 		./env/srcs/private/Vector3d_op.cpp		\
 		./env/srcs/private/Vector3f.cpp			\
 		./env/srcs/private/Vector3f_op.cpp		\
+		./env/srcs/private/Signal.cpp			\
 		\
 		./main.cpp
-
+#		./env/srcs/private/ThreadQueue.cpp
 LMAKE = @make --no-print-directory -C
 
 OBJS_DIR = objs
@@ -51,7 +55,7 @@ DEPS = $(OBJS:%.obj=%.d)
 
 INCLUDES = -I ./env/srcs -I .
 
-CFLAGS = -Wall -Wextra -Winline -Wno-comment -MMD -O3 -march=native #-g3
+CFLAGS = -Wall -Wextra -Winline -Wno-comment -Wno-non-template-friend -MMD -O3 -march=native -g3
 
 LIB = -lpthread
 

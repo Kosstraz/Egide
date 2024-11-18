@@ -9,10 +9,12 @@
 # include "../NSLplatform.h"
 
 # include "Function.hpp"
+# include "Callable.hpp"
 # include "Package.hpp"
 # include "Unpack.hpp"
 # include "String.hpp"
 # include "Mutex.hpp"
+# include "Let.hpp"
 # include <pthread.h>
 # include <map>
 
@@ -39,25 +41,74 @@ public:
 #pragma region Constructors
 	Thread() = delete;
 
+			//* Basic constructors
+
+		// Constructor with pointer to function
+		// No arguments
 	template <typename TRet>
 	Thread(TRet (*funThread)());
+		// Constructor with pointer to function
+		// One argument void*
 	template <typename TRet>
 	Thread(TRet (*funThread)(void*), void*);
+		// Constructor with pointer to function
+		// Variadic arguments
 	template <typename TRet, typename ... TFunArgs, typename ... TArgs>
 	Thread(TRet (*funThread)(TFunArgs ...), TArgs ...args);
 
-		// Normal constructors with non-static method
+			//* Basic constructors (with Function)
+
+		// Constructor with Function object
+		// No arguments
+	template <typename TRet>
+	Thread(Function<TRet()> funThread);
+		// Constructor with Function object
+		// One argument void*
+	template <typename TRet>
+	Thread(Function<TRet(void*)> funThread, void*);
+		// Constructor with Function object
+		// Variadic arguments
+	template <typename TRet, typename ... TFunArgs, typename ... TArgs>
+	Thread(Function<TRet(TFunArgs...)> funThread, TArgs ...args);
+
+			//* Basic constructors (with Callable)
+
+		// Constructor with Callable object
+	template <typename TRet, typename... TFunArgs>
+	Thread(Callable<TRet(TFunArgs...)> funThread);
+		// Constructor with a LetCallable object (a generic callable)
+	FORCEINLINE
+	Thread(letc funThread);
+
+			//* Constructor for non-static methods
+
+		// Constructor with a pointer to non-static method
+		// Variadic arguments
 	template <class TObject, typename TRet, typename ... TFunArgs, typename ... TArgs>
 	Thread(TRet (TObject::*)(TFunArgs ...), TObject* obj, TArgs ...args);
+		// Constructor with a pointer to non-static method
+		// No arguments
+	template <class TObject, typename TRet, typename ... TFunArgs>
+	Thread(TRet (TObject::*)(TFunArgs ...), TObject* obj);
 
-	template <typename TRet>
-	Thread(Function<TRet> funThread);
-	template <typename TRet>
-	Thread(Function<TRet, void*> funThread, void*);
-	template <typename TRet, typename ... TFunArgs, typename ... TArgs>
-	Thread(Function<TRet, TFunArgs ...> funThread, TArgs ...args);
-	//template <class TObject, typename TRet, typename ... TFunArgs, typename ... TArgs> {à adapter avec Function<...>(...)}
-	//Thread(TRet (TObject::*)(TFunArgs ...), TObject* obj, TArgs ...args);
+		// Constructor with a pointer to non-static method <=> CONST
+		// Variadic arguments
+	template <class TObject, typename TRet, typename ... TFunArgs, typename ... TArgs>
+	Thread(TRet (TObject::*)(TFunArgs ...) const, const TObject* obj, TArgs ...args);
+		// Constructor with a pointer to non-static method <=> CONST
+		// No arguments
+	template <class TObject, typename TRet, typename ... TFunArgs>
+	Thread(TRet (TObject::*)(TFunArgs ...) const, const TObject* obj);
+
+		// Constructor for non-static methods (with Function)
+	//template <class TObject, typename TRet, typename ... TFunArgs, typename ... TArgs>
+	//Thread(Function<TRet(TFunArgs...), TObject> funThread, TObject* obj, TArgs ...args);
+	//template <class TObject, typename TRet, typename ... TFunArgs>
+	//Thread(Function<TRet(TFunArgs...), TObject> funThread, TObject* obj);
+
+		// Constructor for non-static methods (with Callable)
+	//template <class TObject, typename TRet, typename ... TFunArgs>
+	//Thread(Callable<TRet(TFunArgs...), TObject> funThread, TObject* obj);
 
 	~Thread();
 #pragma endregion
@@ -129,14 +180,28 @@ public:
 	class Async;
 
 private:
+
+		// wrapper for 'pthread'
 	template <typename TObject, typename TRet, typename TFun, typename ... TArgs>
 	static void*	ThreadWrapperMethods(void*);
+	template <typename TObject, typename TRet, typename TFun>
+	static void*	ThreadWrapperMethodsNoArgs(void*);
+	template <typename TObject, typename TRet, typename TFun, typename ... TArgs>
+	static void*	ThreadWrapperConstMethods(void*);
+	template <typename TObject, typename TRet, typename TFun>
+	static void*	ThreadWrapperConstMethodsNoArgs(void*);
 	template <typename TRet, typename TFun, typename ... TArgs>
 	static void*	ThreadWrapper(void*);
 	template <typename TRet>
 	static void*	BasicThreadWrapper(void*);
 	template <typename TRet>
 	static void*	VoidptrThreadWrapper(void*);
+	template <typename TRet, typename... TFunArgs>
+	static void*	BasicThreadWrapper_Callable(void*);
+	FORCEINLINE
+	static void*	BasicThreadWrapper_LetCallable(void*);
+
+		// constructors helper
 
 	template <typename TRet, typename ... TFunArgs, typename ... TArgs>
 	void	constructor(TRet (*)(TFunArgs ...), TArgs ...args);
@@ -147,6 +212,21 @@ private:
 
 	template <typename TObject, typename TRet, typename ... TFunArgs, typename ... TArgs>
 	void	constructor_methods(TRet (TObject::*&)(TFunArgs ...), TObject* obj, TArgs ...args);
+	template <typename TObject, typename TRet>
+	void	constructor_methods(TRet (TObject::*&)(), TObject* obj);
+
+	template <typename TObject, typename TRet, typename ... TFunArgs, typename ... TArgs>
+	void	constructor_methods(TRet (TObject::*&)(TFunArgs ...) const, const TObject* obj, TArgs ...args);
+	template <typename TObject, typename TRet>
+	void	constructor_methods(TRet (TObject::*&)() const, const TObject* obj);
+
+	template <typename TRet, typename... TFunArgs>
+	void	constructor_for_callable(Callable<TRet(TFunArgs...)>);
+	FORCEINLINE
+	void	constructor_for_callable(letc);
+
+public:
+	thread_local static const int32	ThisTID;
 
 private:
 	bool					joined;

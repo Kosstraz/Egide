@@ -9,84 +9,204 @@
 # include "NSLplatform.h"
 # include "NSLSIMDplatform.h"
 
+//Todo General: 'Memory::MemCpy' with SIMD operations
+//Todo General: Finish Queue<T>
+//Todo General: Make a List class (a base class for all list type classes)
+//Todo General: Make a Stack class
+//Todo General: Make a BTree class
+
 // !Two memory leaks in threading edge case (in the Thread class)
 // !If not, no memory leak currently detected
 
-// ?Memory
+/*
+	MEMORY
+*/
+
 # include "srcs/Allocator.hpp"
 
-// ?Types capabilities
+/*
+	NETWORK
+*/
+
+# include "Socket.hpp"
+
+/*
+	TYPES CAPABILITIES
+*/
+
 # include "srcs/TypesCap.hpp"
 
-// ?Types capabilities
-# include "srcs/TypesName.hpp"
+/*
+	MATHS
+*/
 
-// ?Types capabilities
-# include "srcs/IsSubclassOf.hpp"
-
-// ?Types capabilities
-# include "srcs/IsConvertible.hpp"
-
-// ?Constitutes a sort of heap of objects, of variable types, allocated
-// Todo: Reforge all (and optimize)
-# include "srcs/Pool.hpp"
-
-// ?An in/out class
-// Todo: optimize (a lot)
-# include "srcs/IOStreams.hpp"
-
-// ?Allows heavy mathematical calculations to be performed during compilation
-# include "srcs/CompilationMaths.hpp"
-
-// ?Utility
-# include "srcs/SmartPtr.hpp"
-
-// ?Utility
-# include "srcs/Function.hpp"
-
-// ?Utility
-# include "srcs/Package.hpp"
-
-// ?Utility
-# include "srcs/Unpack.hpp"
-
-// ?Utility
-# include "srcs/Meta.hpp"
-
-// ?A well threading system
-# include "srcs/Thread.hpp"
-
-// ?For threading & multithreading
-# include "srcs/Channel.hpp"
-
-// ?For multithreading
-# include "srcs/Barrier.hpp"
-
-// ?For threading and multithreading
-# include "srcs/Async.hpp"
-
-// ?For threading & multithreading
-# include "srcs/Mutex.hpp"
-
-// ?Allows secure multithreading and easy access to threads via their identifier ID
-# include "srcs/MultiThreading.hpp"
-
-// ?Equivalent à std::string (en beaucoup + performant & avec + de fonctionnalités)
-// Todo: .Find()
-// Todo: .FindFirstOf()
-// Todo: .FindLastOf()
-// Todo: .FindNotFirstOf()
-// Todo: .FindNotLastOf()
-// Todo: .Insert()  --> char & String
-# include "srcs/String.hpp"
-
-// ?Maths namespace
 # include "srcs/Maths.hpp"
-
-// ?Include Vector3 & Vector4 (for mathematical usage)
+# include "srcs/CompilationMaths.hpp"
 # include "srcs/MathVectors.h"
 
-// ?Equivalent to std::pair<T1, T2> (without use of std::make_pair(...))
+/*
+	UTILITY
+*/
+
+# include "srcs/Signal.hpp"
+# include "srcs/Iterator.hpp"
+# include "srcs/Meta.hpp"
+# include "srcs/SmartPtr.hpp"
+# include "srcs/Function.hpp"
+// Todo: little optimizations
+# include "srcs/String.hpp"
+//# include "srcs/VTable.hpp"
+
+/*
+	UTILITY CONTAINER
+*/
+
+//# include "srcs/Let.hpp"
 # include "srcs/Pair.hpp"
+# include "srcs/Trio.hpp"
+# include "srcs/Package.hpp"
+# include "srcs/Unpack.hpp"
+
+/*
+	CONTAINERS
+*/
+
+# include "srcs/Queue.hpp"
+
+/*
+Todo: Mutex::Fast			--> spinlock
+Todo: SmartMutex			--> An abstract class for simply usage of mutex
+Todo: Atomic class			--> Opérations atomiques
+Todo: ThreadQueue			--> Gérer une file d'attente pour un thread
+Todo: ThreadStealingQueue	--> Comme ThreadQueue, mais si un Thread n'a pas de file, il vole les actions en attente, des autres
+Todo: ThreadProfiler		--> Profile la performance des threads
+	THREADS
+*/
+
+# include "srcs/Sleep.hpp"
+# include "srcs/Thread.hpp"
+# include "srcs/ThreadQueue.hpp"
+# include "srcs/Channel.hpp"
+# include "srcs/Barrier.hpp"
+# include "srcs/Async.hpp"
+# include "srcs/Mutex.hpp"
+# include "srcs/MultiThreading.hpp"
+
+/*
+	DEPRECATED
+*/
+
+# include "srcs/Pool.hpp"
+# include "srcs/IOStreams.hpp"
+
+
+
+/******************************
+	EASY VOID DOCUMENTATION
+******************************/
+
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// Is not a real namespace, dot not use it for coding
+//
+// Is an easy "void" documentation
+// Every text with a _ at the beginning and at the ending, and in full lowercase is a category
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+namespace NSL
+{
+	namespace _memory_
+	{
+		// Difference between HotReserve/HotFree & Reserve/Free is minimal
+		// Check execution time and see if there is a big change
+		class	Allocator;
+	}
+
+	namespace _maths_
+	{
+		// Class vector3f(loat) is a powerful mathematical structure
+		class	Vector3f;
+		// Class vector3d(ouble) is a powerful mathematical structure
+		class	Vector3d;
+	}
+
+	namespace _optimization_
+	{
+		// An "Empty Base Optimization" class
+		class	EBO;
+	}
+
+	namespace _utility_
+	{
+		// A smart pointer
+		class	SmartPtr;
+		// To store a function with any many arguments (or without)
+		class	Function;
+		// A String class
+		class	String;
+	}
+
+	namespace _utility_containers_
+	{
+		// A structure containing 2 elements
+		struct	Pair;
+		// A structure containing 3 elements
+		struct	Trio;
+		// Package class encapsulates any many args
+		struct	Package;
+		// Put a function 'fun' and a Package<...> of many any args, and the Unpack class will depack your args in Package<...> and put them in the function 'fun'
+		struct	Unpack;
+		// NSUnpack, unlike Unpack, handles pointer to a non-static member method.
+		struct	NSUnpack;
+	}
+
+	namespace _containers_
+	{
+		class	Queue;
+	}
+
+	namespace _threads_
+	{
+		// A well threading system
+		class	Thread;
+		// --> Thread::Async <--
+		//
+		// Allows to a thread to pause, and another to continue him
+		class	Async;
+		// It's a simpler way to create thread and manage them.
+		class	MultiThreading;
+		// You can safely send & receive data between any threads
+		class	Channel;
+		// Create a barrier with a number, representing the number of threads that must wait for the barrier.
+		// This allows you to synchronize threads so that they wait for each other.
+		class	Barrier;
+		// It's a simpler way to create Barrier and manage them.
+		class	ManagedBarrier;
+		// Allows you to protect your data in differents threads when you read or write them.
+		class	Mutex;
+		// --> Mutex::Strict <--
+		//
+		// Like the Mutex class, but here you can choose between ReadOnly locking or/and WriteRead locking.
+		class	Strict;
+		// --> Mutex::Recursive <--
+		//
+		// A Mutex to use in recursivity
+		class	Recursive;
+	}
+
+	// For mathematical calculations
+	namespace	_maths_::Maths			{}
+	// Allows heavy mathematical calculations to be performed during compilation
+	namespace	_maths_::CMaths			{}
+	// Capabilities of types
+	namespace	_utility_::Types		{}
+	// Metaprogramation
+	namespace	_utility_::Meta			{}
+	// Sleeping action
+	namespace	_utility_::Sleep		{}
+	// Actions in others threads
+	namespace	_threads_::OtherThread	{}
+	// Actions in this thread
+	namespace	_threads_::ThisThread	{}
+}
+
 
 #endif

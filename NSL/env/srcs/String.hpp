@@ -18,6 +18,14 @@
 # include "Allocator.hpp"
 # include <string> // just for the conversion between String AND std::string
 
+// A String class
+//
+// Todo: .Find()
+// Todo: .FindFirstOf()
+// Todo: .FindLastOf()
+// Todo: .FindNotFirstOf()
+// Todo: .FindNotLastOf()
+// Todo: .Insert()  --> char & String
 class String final
 {
 public:
@@ -127,7 +135,7 @@ private:
 	__ncopy__ (char* dest, const char* src, const uint64 nbyte)	noexcept;
 
 public:
-	constexpr const char&	operator[](int index)	const noexcept;
+	constexpr char&			operator[](int index)	const noexcept;
 	constexpr				operator const char*()	const noexcept;
 
 	constexpr bool			operator<(const String& str)	const noexcept;

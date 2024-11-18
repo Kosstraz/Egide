@@ -8,9 +8,10 @@
 
 # include "Mutex.hpp"
 # include "String.hpp"
+# include "Sleep.hpp"
 # include <map>
 
-// You can safely send data between any threads
+// You can safely send & receive data between any threads
 class Channel final
 {
 public:
@@ -42,6 +43,7 @@ public:
 		while (!Channel::async_send.contains(messageID))
 		{
 			Channel::mutex_send.Unlock();
+			Thread::Async::LongYield();
 			Channel::mutex_send.Lock();
 		}
 		TRet*	ptr = static_cast<TRet*>(Channel::async_send.at(messageID));

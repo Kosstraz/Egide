@@ -10,6 +10,7 @@
 
 # include "IsSubclassOf.hpp"
 
+// A smart pointer
 template <typename T>
 class SmartPtr final
 {

@@ -13,7 +13,6 @@ String::String() : data(new char[STRING_PREALLOC_SIZE + 1ULL]), size(0ULL), capa
 //{
 //}
 
-#include <iostream>
 String::String(const String& str) : data(String::CString(str)), size(str.size), capacity(STRING_PREALLOC_SIZE), allocated(true)
 {
 }//Todo: faire le préallouage

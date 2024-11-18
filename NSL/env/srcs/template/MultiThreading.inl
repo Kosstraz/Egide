@@ -35,7 +35,7 @@ MultiThreading::TryGet(const String& threadToWait)
 
 template <typename TRet, typename TObject, typename... TArgs>
 void
-Create(const String& threadName, TRet (TObject::*memFun)(TArgs...), TObject* objInstance, TArgs... args) noexcept
+MultiThreading::Create(const String& threadName, TRet (TObject::*memFun)(TArgs...), TObject* objInstance, TArgs... args) noexcept
 {
 	MultiThreading::threads.insert(std::make_pair<const String&, Thread>(threadName, Thread(memFun, objInstance, args...)));
 }

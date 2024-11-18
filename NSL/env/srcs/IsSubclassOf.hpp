@@ -6,7 +6,7 @@
 #ifndef NSL_ISSUBCLASSOF_HPP
 #define NSL_ISSUBCLASSOF_HPP
 
-# include "TypesCap.hpp"
+# include "TypesCapUtils.hpp"
 
 namespace private_IsSubclassOf
 {

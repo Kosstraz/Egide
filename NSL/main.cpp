@@ -20,7 +20,35 @@ float	ThreadTesting(String parameter /* can put infinite parameters */)
 
 int	main(void)
 {
-	MultiThreading::Create("test1", ThreadTesting, String("norage"));
+	//let	ez = 3;
+	//std::cout << ez.ConstCast() << "\n";
+
+	//std::cout << fonctionTest.Call<int>(21.312f) << std::endl;
+	//letf	ft = EzF;
+	//ft(2);
+
+	/*let ez		= "EZEZEZ";
+	let entier	= 3;
+	std::cout << ez.ConstCast<const char*>() << std::endl; //EZEZEZ
+	entier.Cast<int>() += 39;
+	std::cout << entier.ConstCast<int>() << std::endl; //42*/
+
+
+	/*ThreadQueue	quoicoubeh;
+	quoicoubeh.Push(FonctionAWTF, 32.32f);
+	quoicoubeh.WaitQueue();
+	std::cout << "Push 1 finished\n";
+	quoicoubeh.Push(FonctionAWTF, 32.32f);
+	quoicoubeh.WaitQueue();
+	std::cout << "Push 2 finished\n";
+	quoicoubeh.Push(FonctionAWTF, 32.32f);
+	quoicoubeh.WaitQueue();
+	std::cout << "Push 3 finished\n";
+	quoicoubeh.Push(FonctionAWTF, 32.32f);
+	quoicoubeh.WaitQueue();
+	std::cout << "Push 4 finished\n";*/
+
+	/*MultiThreading::Create("test1", ThreadTesting, String("norage"));
 	std::cout << "MT IsAlive ? " << (MultiThreading::IsAlive("test1") ? "yes" : "no") << std::endl;
 	std::cout << "MT IsExist ? " << (MultiThreading::IsExist("test1") ? "yes" : "no") << std::endl;
 	Channel::Send("goodSendingOK?", true);

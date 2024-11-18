@@ -10,6 +10,7 @@
 
 # include "IsSubclassOf.hpp"
 
+// A smart pointer
 template <typename T>
 class SmartPtr final
 {
@@ -29,6 +30,9 @@ public:
 	SmartPtr(const SmartPtr<U>& sPtr)	noexcept;
 	template <typename U>
 	requires Types::IsSubclassOf<T, U>
+	SmartPtr(SmartPtr<U>&& sPtr)	noexcept;
+	template <typename U>
+	requires Types::IsSubclassOf<T, U>
 	SmartPtr(U* sPtr)					noexcept;
 	template <typename U>
 	requires Types::IsSubclassOf<T, U>
@@ -39,8 +43,11 @@ public:
 
 	~SmartPtr() noexcept;
 
+	void	DeleteOccurrence()			noexcept;
 	void	destroy()					noexcept;
 	void	destroyForce();
+	[[nodiscard]]
+	const T*	const_get()		const	noexcept;
 	[[nodiscard]]
 	T*		ptr()						noexcept;
 	[[nodiscard]]
@@ -52,8 +59,10 @@ public:
 private:
 	void		matchWithNew(T* newPtr, maxsptr_t* newCount);
 
-private:
+protected:
+	[[no_unique_address]]
 	T*			_ptr  = nullptr;
+	[[no_unique_address]]
 	maxsptr_t*	count = nullptr;
 
 public:

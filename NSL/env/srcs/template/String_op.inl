@@ -1,7 +1,7 @@
 #include "../String.hpp"
 
 #pragma region OthersOP
-constexpr const char&
+constexpr char&
 String::operator[](int index) const noexcept
 {
 	return (this->data[index]);

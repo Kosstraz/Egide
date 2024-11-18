@@ -14,7 +14,10 @@
 namespace IO
 {
 
+// An in/out class
+//
 // Deprecated at the moment
+// Todo: optimize (a lot) and so much methods
 class /*[[deprecated]]*/ Streams
 {
 public:

@@ -5,7 +5,11 @@
 
 #include "../Thread.hpp"
 
-pthread_t	Thread_MainThreadID = pthread_self();
+pthread_t
+Thread_MainThreadID = pthread_self();
+thread_local
+const int32
+Thread::ThisTID = gettid();
 
 Thread::~Thread()
 {

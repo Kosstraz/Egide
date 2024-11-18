@@ -9,32 +9,32 @@ ManagedBarrier::sync_mutex = Mutex::Strict();
 void
 ManagedBarrier::Create(const String& barrierID, const uint& count) noexcept
 {
-	this->sync_mutex.WRLock();
-	this->sync_barrier.emplace(barrierID, Barrier(count));
-	this->sync_mutex.Unlock();
+	ManagedBarrier::sync_mutex.WRLock();
+	ManagedBarrier::sync_barrier.emplace(barrierID, Barrier(count));
+	ManagedBarrier::sync_mutex.Unlock();
 }
 
 void
 ManagedBarrier::Create(const String& barrierID, uint&& count) noexcept
 {
-	this->sync_mutex.WRLock();
-	this->sync_barrier.emplace(barrierID, Barrier(Meta::Move(count)));
-	this->sync_mutex.Unlock();
+	ManagedBarrier::sync_mutex.WRLock();
+	ManagedBarrier::sync_barrier.emplace(barrierID, Barrier(Meta::Move(count)));
+	ManagedBarrier::sync_mutex.Unlock();
 }
 
 void
 ManagedBarrier::Wait(const String& barrierID)
 {
-	this->sync_mutex.RLock();
+	ManagedBarrier::sync_mutex.RLock();
 	try
 	{
-		Barrier& b = this->sync_barrier.at(barrierID);
-		this->sync_mutex.Unlock();
+		Barrier& b = ManagedBarrier::sync_barrier.at(barrierID);
+		ManagedBarrier::sync_mutex.Unlock();
 		b.Wait();
 	}
 	catch (...)
 	{
-		this->sync_mutex.Unlock();
+		ManagedBarrier::sync_mutex.Unlock();
 		throw (ManagedBarrier::DoesNotExist());
 	}
 }
@@ -42,33 +42,33 @@ ManagedBarrier::Wait(const String& barrierID)
 void
 ManagedBarrier::Destroy(const String& barrierID)
 {
-	this->sync_mutex.WRLock();
+	ManagedBarrier::sync_mutex.WRLock();
 	try
 	{
-		this->sync_barrier.erase(barrierID);
-		this->sync_mutex.Unlock();
+		ManagedBarrier::sync_barrier.erase(barrierID);
+		ManagedBarrier::sync_mutex.Unlock();
 	}
 	catch (...)
 	{
-		this->sync_mutex.Unlock();
+		ManagedBarrier::sync_mutex.Unlock();
 		throw (ManagedBarrier::DoesNotExist());
 	}
 }
 
 uint
-ManagedBarrier::GetNumberOfBarriers(const String& barrierID) const
+ManagedBarrier::GetNumberOfBarriers(const String& barrierID)
 {
 	uint	ret;
 
-	this->sync_mutex.RLock();
+	ManagedBarrier::sync_mutex.RLock();
 	try
 	{
-		ret = static_cast<uint>(this->sync_barrier.at(barrierID).GetNumberOfBarriers());
-		this->sync_mutex.Unlock();
+		ret = static_cast<uint>(ManagedBarrier::sync_barrier.at(barrierID).GetNumberOfBarriers());
+		ManagedBarrier::sync_mutex.Unlock();
 	}
 	catch (...)
 	{
-		this->sync_mutex.Unlock();
+		ManagedBarrier::sync_mutex.Unlock();
 		throw (ManagedBarrier::DoesNotExist());
 	}
 	return (ret);

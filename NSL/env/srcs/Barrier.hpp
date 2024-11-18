@@ -38,15 +38,15 @@ public:
 	explicit ManagedBarrier(Barrier&&)		= delete;
 	virtual ~ManagedBarrier()				= delete;
 
-	void Create(const String& barrierID, const uint& count) noexcept;
-	void Create(const String& barrierID, uint&& count) noexcept;
+	static void Create(const String& barrierID, const uint& count) noexcept;
+	static void Create(const String& barrierID, uint&& count) noexcept;
 
-	void Wait(const String& barrierID);
+	static void Wait(const String& barrierID);
 
-	void Destroy(const String& barrierID);
+	static void Destroy(const String& barrierID);
 
 	using Barrier::GetNumberOfBarriers;
-	uint	GetNumberOfBarriers(const String& barrierID) const;
+	static uint	GetNumberOfBarriers(const String& barrierID);
 
 	class DoesNotExist
 	{

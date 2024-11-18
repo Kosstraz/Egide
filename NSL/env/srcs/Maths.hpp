@@ -3,6 +3,7 @@
 
 # include "../NSLplatform.h"
 
+// For mathematical calculations
 namespace Maths
 {
 

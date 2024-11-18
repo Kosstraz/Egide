@@ -6,8 +6,11 @@
 # include "../NSLSIMDplatform.h"
 # include "../NSLplatform.h"
 
-// Produit mixte (Triple produit scalaire)
-// Projection d'un vecteur vers un autre
+// Class vector3d is a powerful mathematical structure
+// Calcul with double
+//
+// Todo: Produit mixte (Triple produit scalaire)
+// Todo: Projection d'un vecteur vers un autre
 class alignas(32) Vector3d
 {
 public:

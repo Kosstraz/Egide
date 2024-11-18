@@ -18,6 +18,14 @@
 # include "Allocator.hpp"
 # include <string> // just for the conversion between String AND std::string
 
+// A String class
+//
+// Todo: .Find()
+// Todo: .FindFirstOf()
+// Todo: .FindLastOf()
+// Todo: .FindNotFirstOf()
+// Todo: .FindNotLastOf()
+// Todo: .Insert()  --> char & String
 class String final
 {
 public:

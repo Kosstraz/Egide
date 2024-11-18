@@ -28,12 +28,13 @@ SRCS =	./env/NSLSIMDplatform.cpp					\
 		./env/NSLsrcs/private/String.cpp			\
 		./env/NSLsrcs/private/IOStream.cpp			\
 		./env/NSLsrcs/private/Pool.cpp				\
+		./env/NSLsrcs/private/Sleep.cpp				\
 		./env/NSLsrcs/private/Mutex.cpp				\
 		./env/NSLsrcs/private/MutexStrict.cpp		\
 		./env/NSLsrcs/private/Barrier.cpp			\
 		./env/NSLsrcs/private/ManagedBarrier.cpp	\
-		./env/NSLsrcs/private/Thread.cpp			\
 		./env/NSLsrcs/private/Async.cpp				\
+		./env/NSLsrcs/private/Thread.cpp			\
 		./env/NSLsrcs/private/Channel.cpp			\
 		./env/NSLsrcs/private/MultiThreading.cpp	\
 		./env/NSLsrcs/private/Vector3d.cpp			\

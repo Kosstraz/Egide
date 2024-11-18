@@ -15,6 +15,7 @@
 // Constitutes a sort of heap of objects, of variable types, allocated
 //
 // Deprecated at the moment
+// Todo: Reforge all (and optimize)
 class /*[[deprecated]]*/ Pool final
 {
 public:
