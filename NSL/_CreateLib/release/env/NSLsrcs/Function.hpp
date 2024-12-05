@@ -6,25 +6,36 @@
 #ifndef NSL_FUNCTION_HPP
 #define NSL_FUNCTION_HPP
 
+# include "Meta.hpp"
+# include "IsEmpty.hpp"
+# include "Callable.hpp"
+# include <type_traits>
+
+template <typename TSignature>
+class Function;
+
+template <typename TRet, typename... TArgs>
+struct Callable;
+
 // To store a function with any many arguments
-template <typename TRet, typename ... TArgs>
-class Function final
+template <typename TRet, typename... TArgs>
+class Function<TRet(TArgs...)> final
 {
 public:
 	typedef TRet (*FUNTYPE)(TArgs...);
 
 public:
-	Function() 				noexcept;
-	Function(FUNTYPE fun) 	noexcept;
-	~Function() 			noexcept = default;
+	Function() 							noexcept;
+	Function(Function::FUNTYPE f) 		noexcept;
+	~Function() 						noexcept = default;
 
 public:
-	FUNTYPE	Get() 				const	noexcept;
-	TRet	Play(TArgs ...args) const	noexcept;
-	void	Replace(FUNTYPE fun) 		noexcept;
+	Function::FUNTYPE	Get() 		const	noexcept;
+	TRet	Play(TArgs... args)		const	noexcept;
+	void	Replace(FUNTYPE fun) 			noexcept;
 
 private:
-	TRet (*fun)(TArgs ...);
+	Function::FUNTYPE	fun;
 
 public:
 	operator FUNTYPE() const noexcept
@@ -35,38 +46,6 @@ public:
 	TRet	operator()(TArgs ...args) const
 	{
 		return (this->fun(args ...));
-	}
-};
-
-// To store a function without parameters
-template <typename TRet>
-class Function<TRet> final
-{
-public:
-	typedef TRet (*FUNTYPE)();
-
-public:
-	Function() 				noexcept;
-	Function(FUNTYPE fun) 	noexcept;
-	~Function() 			noexcept = default;
-
-public:
-	FUNTYPE	Get() 				const	noexcept;
-	TRet	Play() 				const	noexcept;
-	void	Replace(FUNTYPE fun)		noexcept;
-
-private:
-	TRet (*fun)();
-
-public:
-	operator FUNTYPE() const noexcept
-	{
-		return (this->fun);
-	}
-
-	TRet	operator()() const
-	{
-		return (this->fun());
 	}
 };
 

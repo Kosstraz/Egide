@@ -9,70 +9,33 @@
 # include "../Function.hpp"
 
 template <typename TRet, typename ... TArgs>
-Function<TRet, TArgs ...>::Function() noexcept
-										: fun(static_cast<FUNTYPE>(nullptr))
+Function<TRet(TArgs...)>::Function() noexcept
+										: fun(nullptr)
 {
 }
 
 template <typename TRet, typename ... TArgs>
-Function<TRet, TArgs ...>::Function(FUNTYPE fun) noexcept : fun(fun)
+Function<TRet(TArgs...)>::Function(Function::FUNTYPE f) noexcept : fun(f)
 {
 }
 
 template <typename TRet, typename ... TArgs>
-Function<TRet, TArgs ...>::FUNTYPE
-Function<TRet, TArgs ...>::Get() const noexcept
+Function<TRet(TArgs...)>::FUNTYPE
+Function<TRet(TArgs...)>::Get() const noexcept
 {
 	return (this->fun);
 }
 
 template <typename TRet, typename ... TArgs>
 TRet
-Function<TRet, TArgs ...>::Play(TArgs ...args) const noexcept
+Function<TRet(TArgs...)>::Play(TArgs... args) const noexcept
 {
-	return (this->fun(args ...));
+	return (this->fun(Meta::Forward<TArgs>(args)...));
 }
 
 template <typename TRet, typename ... TArgs>
 void
-Function<TRet, TArgs ...>::Replace(FUNTYPE fun) noexcept
-{
-	this->fun = fun;
-}
-
-
-
-
-
-
-
-
-
-template <typename TRet>
-Function<TRet>::Function() noexcept : fun(static_cast<FUNTYPE>(nullptr))
-{
-}
-
-template <typename TRet>
-Function<TRet>::Function(FUNTYPE fun) noexcept : fun(fun)
-{
-}
-
-template <typename TRet>
-Function<TRet>::FUNTYPE
-	Function<TRet>::Get() const noexcept
-{
-	return (this->fun);
-}
-
-template <typename TRet>
-TRet	Function<TRet>::Play() const noexcept
-{
-	return (this->fun());
-}
-
-template <typename TRet>
-void	Function<TRet>::Replace(FUNTYPE fun) noexcept
+Function<TRet(TArgs...)>::Replace(FUNTYPE fun) noexcept
 {
 	this->fun = fun;
 }

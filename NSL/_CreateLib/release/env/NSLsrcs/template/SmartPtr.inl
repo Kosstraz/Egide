@@ -70,6 +70,15 @@ SmartPtr<T>::~SmartPtr() noexcept
 
 template <typename T>
 void
+SmartPtr<T>::DeleteOccurrence() noexcept
+{
+	this->_ptr = nullptr;
+	(*this->count)--;
+	this->count = nullptr;
+}
+
+template <typename T>
+void
 SmartPtr<T>::destroy() noexcept
 {
 	if (this->count != nullptr && *this->count > 0)
@@ -102,6 +111,13 @@ T*
 SmartPtr<T>::ptr() noexcept
 {
 	return (this->_ptr);
+}
+
+template <typename T>
+const T*
+SmartPtr<T>::const_get() const noexcept
+{
+	return (const_cast<const T*>(this->_ptr));
 }
 
 template <typename T>
@@ -205,8 +221,7 @@ template <typename U>
 requires Types::IsSubclassOf<T, U>
 SmartPtr<T>::SmartPtr(const SmartPtr<U>& sPtr) noexcept
 {
-	if ((void *)(this) != (void *)(&sPtr) &&
-		(void *)(this->_ptr) != (void *)(sPtr.ptr()))
+	if (this->_ptr != sPtr.ptr())
 	{
 		this->matchWithNew(sPtr.ptr(), sPtr.CounterPtr());
 		if (this->_ptr != nullptr)
@@ -214,6 +229,23 @@ SmartPtr<T>::SmartPtr(const SmartPtr<U>& sPtr) noexcept
 			(*sPtr.CounterPtr())++;
 			this->count = sPtr.CounterPtr();
 		}
+	}
+}
+
+template <typename T>
+template <typename U>
+requires Types::IsSubclassOf<T, U>
+SmartPtr<T>::SmartPtr(SmartPtr<U>&& sPtr) noexcept
+{
+	if (this->_ptr != sPtr.ptr())
+	{
+		this->matchWithNew(sPtr.ptr(), sPtr.CounterPtr());
+		if (this->_ptr != nullptr)
+		{
+			(*sPtr.CounterPtr())++;
+			this->count = sPtr.CounterPtr();
+		}
+		sPtr.DeleteOccurrence();
 	}
 }
 

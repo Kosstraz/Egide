@@ -6,8 +6,7 @@
 #ifndef NSL_META_HPP
 #define NSL_META_HPP
 
-# include "TypesCap.hpp"
-
+# include "TypesCapUtils.hpp"
 
 // Metaprogramation
 namespace Meta
@@ -48,6 +47,30 @@ inline constexpr void	Swap(T& a, T& b)
 	a = Meta::Move(b);
 	b = Meta::Move(temp);
 }
+
+
+
+template <typename TSignature>
+struct ISelectOverloading;
+
+template <typename TRet, typename... TArgs>
+struct ISelectOverloading<TRet(TArgs...)>
+{
+	FORCEINLINE
+	constexpr TRet
+	static (*Cast(TRet (*f)(TArgs...)))(TArgs...)
+	{
+		return (f);
+	}
+
+	template <class TObject>
+	FORCEINLINE
+	constexpr TRet
+	static (TObject::*Cast(TRet (TObject::*f)(TArgs...)))(TArgs...)
+	{
+		return (f);
+	}
+};
 
 }
 

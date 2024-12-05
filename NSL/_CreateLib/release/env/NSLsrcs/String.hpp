@@ -135,7 +135,7 @@ private:
 	__ncopy__ (char* dest, const char* src, const uint64 nbyte)	noexcept;
 
 public:
-	constexpr const char&	operator[](int index)	const noexcept;
+	constexpr char&			operator[](int index)	const noexcept;
 	constexpr				operator const char*()	const noexcept;
 
 	constexpr bool			operator<(const String& str)	const noexcept;

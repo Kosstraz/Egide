@@ -37,6 +37,7 @@ public:
 	void	Unlock()	noexcept;
 
 	class Strict;
+	class Recursive;
 
 private:
 		pthread_mutex_t		mutex;
@@ -66,6 +67,26 @@ public:
 
 private:
 	pthread_rwlock_t	mutex;
+};
+
+// A Mutex to use in recursivity
+class Mutex::Recursive
+{
+public:
+	Recursive()		noexcept;
+	~Recursive()	noexcept;
+
+	void	Destroy();
+	int		TryLock();
+	void	TimedLock(seconds_t n)	noexcept;
+	void	TimedLock(mseconds_t n)	noexcept;
+	void	TimedLock(nseconds_t n)	noexcept;
+	void	Lock()		noexcept;
+
+	void	Unlock()	noexcept;
+
+private:
+	pthread_mutex_t	mutex;
 };
 
 #endif

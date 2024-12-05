@@ -61,7 +61,7 @@
 	UTILITY CONTAINER
 */
 
-//# include "srcs/Let.hpp"
+# include "srcs/Let.hpp"
 # include "srcs/Pair.hpp"
 # include "srcs/Trio.hpp"
 # include "srcs/Package.hpp"
@@ -154,8 +154,6 @@ namespace NSL
 		struct	Package;
 		// Put a function 'fun' and a Package<...> of many any args, and the Unpack class will depack your args in Package<...> and put them in the function 'fun'
 		struct	Unpack;
-		// NSUnpack, unlike Unpack, handles pointer to a non-static member method.
-		struct	NSUnpack;
 	}
 
 	namespace _containers_

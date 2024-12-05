@@ -55,7 +55,7 @@ DEPS = $(OBJS:%.obj=%.d)
 
 INCLUDES = -I ./env/srcs -I .
 
-CFLAGS = -Wall -Wextra -Winline -Wno-comment -Wno-non-template-friend -MMD -O3 -march=native -g3
+CFLAGS = -Wall -Wextra -Winline -Wno-comment -Wno-unknown-pragmas -Wno-non-template-friend -MMD -O3 -march=native -g3
 
 LIB = -lpthread
 

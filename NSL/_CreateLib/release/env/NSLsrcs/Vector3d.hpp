@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024 Kosstraz/Bama
+ * Licensed under the MIT License.
+*/
+
 #ifndef NSL_VECTOR3D_HPP
 #define NSL_VECTOR3D_HPP
 

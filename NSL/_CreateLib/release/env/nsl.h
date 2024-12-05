@@ -9,6 +9,12 @@
 # include "NSLplatform.h"
 # include "NSLSIMDplatform.h"
 
+//Todo General: 'Memory::MemCpy' with SIMD operations
+//Todo General: Finish Queue<T>
+//Todo General: Make a List class (a base class for all list type classes)
+//Todo General: Make a Stack class
+//Todo General: Make a BTree class
+
 // !Two memory leaks in threading edge case (in the Thread class)
 // !If not, no memory leak currently detected
 
@@ -19,13 +25,16 @@
 # include "NSLsrcs/Allocator.hpp"
 
 /*
+	NETWORK
+*/
+
+# include "NSLsrcs/Socket.hpp"
+
+/*
 	TYPES CAPABILITIES
 */
 
 # include "NSLsrcs/TypesCap.hpp"
-# include "NSLsrcs/TypesName.hpp"
-# include "NSLsrcs/IsSubclassOf.hpp"
-# include "NSLsrcs/IsConvertible.hpp"
 
 /*
 	MATHS
@@ -39,20 +48,30 @@
 	UTILITY
 */
 
+# include "NSLsrcs/Signal.hpp"
+# include "NSLsrcs/Iterator.hpp"
 # include "NSLsrcs/Meta.hpp"
 # include "NSLsrcs/SmartPtr.hpp"
 # include "NSLsrcs/Function.hpp"
-// Todo:
+// Todo: little optimizations
 # include "NSLsrcs/String.hpp"
+//# include "srcs/VTable.hpp"
 
 /*
 	UTILITY CONTAINER
 */
 
+# include "NSLsrcs/Let.hpp"
 # include "NSLsrcs/Pair.hpp"
 # include "NSLsrcs/Trio.hpp"
 # include "NSLsrcs/Package.hpp"
 # include "NSLsrcs/Unpack.hpp"
+
+/*
+	CONTAINERS
+*/
+
+# include "NSLsrcs/Queue.hpp"
 
 /*
 Todo: Mutex::Fast			--> spinlock
@@ -66,6 +85,7 @@ Todo: ThreadProfiler		--> Profile la performance des threads
 
 # include "NSLsrcs/Sleep.hpp"
 # include "NSLsrcs/Thread.hpp"
+# include "NSLsrcs/ThreadQueue.hpp"
 # include "NSLsrcs/Channel.hpp"
 # include "NSLsrcs/Barrier.hpp"
 # include "NSLsrcs/Async.hpp"
@@ -108,6 +128,12 @@ namespace NSL
 		class	Vector3d;
 	}
 
+	namespace _optimization_
+	{
+		// An "Empty Base Optimization" class
+		class	EBO;
+	}
+
 	namespace _utility_
 	{
 		// A smart pointer
@@ -128,8 +154,11 @@ namespace NSL
 		struct	Package;
 		// Put a function 'fun' and a Package<...> of many any args, and the Unpack class will depack your args in Package<...> and put them in the function 'fun'
 		struct	Unpack;
-		// NSUnpack, unlike Unpack, handles pointer to a non-static member method.
-		struct	NSUnpack;
+	}
+
+	namespace _containers_
+	{
+		class	Queue;
 	}
 
 	namespace _threads_
@@ -155,6 +184,10 @@ namespace NSL
 		//
 		// Like the Mutex class, but here you can choose between ReadOnly locking or/and WriteRead locking.
 		class	Strict;
+		// --> Mutex::Recursive <--
+		//
+		// A Mutex to use in recursivity
+		class	Recursive;
 	}
 
 	// For mathematical calculations

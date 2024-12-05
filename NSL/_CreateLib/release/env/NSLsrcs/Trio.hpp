@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024 Kosstraz/Bama
+ * Licensed under the MIT License.
+*/
+
 #ifndef NSL_TRIO_HPP
 #define NSL_TRIO_HPP
 
