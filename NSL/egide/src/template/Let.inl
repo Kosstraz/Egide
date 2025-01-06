@@ -71,7 +71,7 @@ LetVar::operator =(T&& v) noexcept
 
 
 
-
+/*
 template <typename TFun>
 LetFunction::LetFunction(TFun&& f) noexcept : fun(True1<TFun>
 													(Meta::Move<TFun>(f))
@@ -125,7 +125,7 @@ LetFunction::operator ()(TArgs... args) const noexcept
 }
 #pragma endregion
 
-
+*/
 
 
 
@@ -145,7 +145,7 @@ LetCallable::LetCallable(TRet (*f)(TArgs...), TArgs... args) noexcept
 :	lambda([_fun = f, _pack = Package<TArgs...>(Meta::Move(args)...)]()
 	mutable
 	{
-		Unpack<TRet, TArgs...>::Apply(_fun, _pack);
+		Unpack::Apply(_fun, _pack);
 	})
 {
 }
@@ -171,7 +171,7 @@ LetCallable::Set(TRet (*f)(TArgs...), TArgs... args) noexcept
 	([_fun = f, _pack = Package<TArgs...>(Meta::Move(args)...)]()
 	mutable
 	{
-		Unpack<TRet, TArgs...>::Apply(_fun, _pack);
+		Unpack::Apply(_fun, _pack);
 	});
 }
 

@@ -3,7 +3,7 @@
 
 # include "SmartPtr.hpp"
 # include "Package.hpp"
-# include "VTable.hpp"
+//# include "VTable.hpp"
 
 
 #pragma region LetVar
@@ -65,7 +65,8 @@ public:
 	Cast() noexcept;
 
 	template <typename T>
-	const T&
+	FORCEINLINE
+	const T&	//const T&
 	ConstCast() const noexcept;
 
 	template <typename T>
@@ -83,7 +84,7 @@ private:
 
 
 
-
+/*
 #pragma region LetFunction
 
 # define VIRTUAL_TEMPLATE(ArgsType) 					unsigned long long _ULindex = StatefulTypeList::TryPush<VTable< ArgsType >>()
@@ -176,7 +177,7 @@ private:
 };
 
 #pragma endregion
-
+*/
 
 
 
@@ -221,7 +222,7 @@ public:
 	void operator ()() const noexcept;
 
 private:
-	std::function<void()>	lambda;
+	std::function<void()>	lambda; //replace by letf, later
 };
 
 #pragma endregion
@@ -236,7 +237,7 @@ private:
 
 //typedef Let			let;
 typedef LetVar		let;
-typedef LetFunction	letf;
+//typedef LetFunction	letf;
 typedef LetCallable	letc;
 
 # include "template/Let.inl"
