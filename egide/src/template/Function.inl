@@ -15,7 +15,7 @@ Function<TRet(TArgs...)>::Function() noexcept
 }
 
 template <typename TRet, typename ... TArgs>
-Function<TRet(TArgs...)>::Function(typename Function<TRet(TArgs...)>::FUNTYPE f) noexcept : fun(f)
+Function<TRet(TArgs...)>::Function(typename Function<TRet(TArgs...)>::FUNTYPE pFun) noexcept : fun(pFun)
 {
 }
 
@@ -28,16 +28,16 @@ Function<TRet(TArgs...)>::Get() const noexcept
 
 template <typename TRet, typename ... TArgs>
 TRet
-Function<TRet(TArgs...)>::Play(TArgs... args) const noexcept
+Function<TRet(TArgs...)>::Play(TArgs... pArgs) const noexcept
 {
-	return (this->fun(Meta::Forward<TArgs>(args)...));
+	return (this->fun(Meta::Forward<TArgs>(pArgs)...));
 }
 
 template <typename TRet, typename ... TArgs>
 void
-Function<TRet(TArgs...)>::Replace(FUNTYPE fun) noexcept
+Function<TRet(TArgs...)>::Replace(FUNTYPE pFun) noexcept
 {
-	this->fun = fun;
+	this->fun = pFun;
 }
 
 #endif

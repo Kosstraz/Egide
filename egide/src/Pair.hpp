@@ -19,19 +19,19 @@ public:
 	{
 	}
 
-	constexpr	Pair(T1&& a, const T2& b) noexcept : a(Meta::Forward<T1>(a)), b(_T2(b))
+	constexpr	Pair(T1&& pA, const T2& pB) noexcept : a(Meta::Forward<T1>(pA)), b(_T2(pB))
 	{
 	}
 
-	constexpr	Pair(const T1& a, T2&& b) noexcept : a(_T1(a)), b(Meta::Forward<T2>(b))
+	constexpr	Pair(const T1& pA, T2&& pB) noexcept : a(_T1(pA)), b(Meta::Forward<T2>(pB))
 	{
 	}
 
-	constexpr	Pair(const T1& a, const T2& b) noexcept : a(_T1(a)), b(_T2(b))
+	constexpr	Pair(const T1& pA, const T2& pB) noexcept : a(_T1(pA)), b(_T2(pB))
 	{
 	}
 
-	constexpr	Pair(T1&& a, T2&& b) noexcept : a(Meta::Forward<T1>(a)), b(Meta::Forward<T2>(b))
+	constexpr	Pair(T1&& pA, T2&& pB) noexcept : a(Meta::Forward<T1>(pA)), b(Meta::Forward<T2>(pB))
 	{
 	}
 

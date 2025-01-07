@@ -160,6 +160,8 @@ private:
 	bool	allocated;
 };
 
+inline String	operator+(const char* cstr, const String& str) noexcept;
+
 # include "template/String.inl"
 # include "template/String_op.inl"
 #endif

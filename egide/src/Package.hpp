@@ -15,13 +15,13 @@ template <typename T, typename ... TArgs>
 class Package
 {
 public:
-	Package(const T& v, const TArgs&... rest) : value(v), rest(rest...)
+	Package(const T& v, const TArgs&... pRest) : value(v), rest(pRest...)
 	{}
 
-	Package(T&& v, const TArgs&... rest) : value(Meta::Move(v)), rest(rest...)
+	Package(T&& v, const TArgs&... pRest) : value(Meta::Move(v)), rest(pRest...)
 	{}
 
-	Package(const Package<T, TArgs...>& pack) : value(pack.v), rest(pack.rest)
+	Package(const Package<T, TArgs...>& pack) : value(pack.value), rest(pack.rest)
 	{}
 
 	//Package(unsigned int&& i, const T& v, const TArgs&... rest) : index(Meta::Move(i)), value(v), rest(i + 1U, rest...)

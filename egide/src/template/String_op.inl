@@ -81,7 +81,15 @@ String::operator!=(const String& str) const noexcept
 #pragma region ArithmeticOP
 String		String::operator+(const String& str) const noexcept
 {
-	String	ret(*this);
+	String	ret = this->data;
+	ret.Join(str);
+	return (ret);
+}
+
+String		operator+(const char* cstr, const String& str) noexcept
+{
+	String	ret(cstr);
+
 	ret.Join(str);
 	return (ret);
 }

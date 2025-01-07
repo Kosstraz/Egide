@@ -5,6 +5,7 @@
 CLASSIC	= \e[0m
 WHITE	= \e[38;2;238;232;213m
 BOLD	= \e[1m
+UNDERLINE	= \e[4m
 # BLACK	= \e[38;2;0;0;0m
 BLACK	= \e[30m
 RED   	= \e[31m
@@ -71,9 +72,27 @@ LIB = -lpthread
 #*    REGLES    *#
 # ############## #
 
-all: YAY $(NAME)
+all: check_compilation $(NAME)
 
-lib: YAY $(LNAME)
+lib: lib_check_compilation $(LNAME)
+
+libre: fclean lib
+
+check_compilation:
+	@if [ -f $(NAME) ] && \
+		[ -n "$(strip $(OBJS))" ] && \
+		[ -z "$$(find $(SRCS) -newer $(NAME) 2>/dev/null)" ]; then \
+		echo "$(BOLD)$(PURPLE)Tous les fichiers $(UNDERLINE)$(YELLOW)$(NAME)$(CLASSIC)$(BOLD)$(PURPLE) sont déjà compilés !$(CLASSIC)"; \
+		exit 0; \
+	fi
+
+lib_check_compilation:
+	@if [ -f $(LNAME) ] && \
+		[ -n "$(strip $(OBJS))" ] && \
+		[ -z "$$(find $(SRCS) -newer $(NAME) 2>/dev/null)" ]; then \
+		echo "$(BOLD)$(PURPLE)Tous les fichiers $(UNDERLINE)$(YELLOW)$(LNAME)$(CLASSIC)$(BOLD)$(PURPLE) sont déjà compilés !$(CLASSIC)"; \
+		exit 0; \
+	fi
 
 $(NAME): $(OBJS)
 	$(CXX) $(CFLAGS) $(OBJS) $(LIB) -o $@
@@ -81,7 +100,7 @@ $(NAME): $(OBJS)
 
 $(LNAME): $(LOBJS)
 	$(AR) $(LNAME) $(LOBJS)
-	@echo "$(BOLD)$(CYAN)Librairie $(NAME) créé avec succès!$(CLASSIC)"
+	@echo "$(BOLD)$(CYAN)Librairie $(LNAME) créé avec succès!$(CLASSIC)"
 
 $(OBJS_DIR)/%.obj: %.cpp
 	@mkdir -p $(@D)
@@ -100,7 +119,7 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all lib libre clean fclean re
 -include $(DEPS)
 
 # ############## #

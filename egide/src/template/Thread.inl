@@ -8,322 +8,94 @@
 
 # include "../Thread.hpp"
 
-#pragma region Constructor
-
-template <typename TRet>
-Thread::Thread(	TRet (*funThread)()) : joined(false)
+/**/template <typename TFun>
+Thread::Thread(TFun pFun)
 {
-	this->basic_constructor(funThread);
-}
-
-template <typename TRet>
-Thread::Thread(TRet (*funThread)(void*),
-				void* arg) : joined(false)
-{
-	this->voidptr_constructor(funThread, arg);
-}
-
-template <typename TRet, typename ... TFunArgs, typename ... TArgs>
-Thread::Thread(TRet (*funThread)(TFunArgs ...),
-				TArgs&&... args) : joined(false)
-{
-	this->constructor(funThread, Meta::Move(args)...);
-}
- 
-template <typename TRet>
-Thread::Thread(	Function<TRet()> funThread) : joined(false)
-{
-	TRet (*funTmp)() = static_cast<TRet (*)()>(funThread);
-
-	this->basic_constructor(funTmp);
-}
-
-template <typename TRet>
-Thread::Thread(Function<TRet(void*)> funThread,
-				void* arg) : joined(false)
-{
-	this->voidptr_constructor(funThread, arg);
-}
-
-template <typename TRet, typename ... TFunArgs, typename ... TArgs>
-Thread::Thread(	Function<TRet(TFunArgs...)> funThread,
-				TArgs ...args) : joined(false)
-{
-	TRet (*funTmp)(TArgs ...) = static_cast<TRet (*)(TArgs ...)>(funThread);
-	this->constructor(funTmp, args...);
-}
-
-template <typename TRet, typename... TFunArgs>
-Thread::Thread(Callable<TRet(TFunArgs...)> funThread)
-{
-	this->constructor_for_callable(funThread);
-}
-
-Thread::Thread(letc funThread)
-{
-	this->constructor_for_callable(funThread);
-}
-
-#pragma endregion
-
-
-
-
-
-
-#pragma region Constructor non-static methods
-template <typename TObject, typename TRet, typename... TFunArgs, typename... TArgs>
-Thread::Thread(TRet (TObject::*funmethod)(TFunArgs ...), TObject* obj, TArgs ...args) : joined(false)
-{
-	this->constructor_methods(funmethod, obj, args...);
-}
-
-template <typename TObject, typename TRet, typename... TFunArgs>
-Thread::Thread(TRet (TObject::*funmethod)(TFunArgs ...), TObject* obj) : joined(false)
-{
-	this->constructor_methods(funmethod, obj);
-}
-
-template <typename TObject, typename TRet, typename... TFunArgs, typename... TArgs>
-Thread::Thread(TRet (TObject::*funmethod)(TFunArgs ...) const, const TObject* obj, TArgs ...args) : joined(false)
-{
-	this->constructor_methods(funmethod, obj, args...);
-}
-
-template <typename TObject, typename TRet, typename... TFunArgs>
-Thread::Thread(TRet (TObject::*funmethod)(TFunArgs ...) const, const TObject* obj) : joined(false)
-{
-	this->constructor_methods(funmethod, obj);
-}
-#pragma endregion
-
-
-
-
-
-
-#pragma region constructorHelper
-
-template <typename TRet, typename ... TFunArgs, typename ... TArgs>
-void
-Thread::constructor(TRet (*f)(TFunArgs ...), TArgs&&... args)
-{
-	this->wrapperHelper = new WrapperHelper;
-	this->wrapperHelper->funPtr = reinterpret_cast<void*&>(f);
-	this->wrapperHelper->args = new Package<TArgs...>(Meta::Move(args)...);
-	pthread_create(&this->thread, nullptr, Thread::ThreadWrapper<TRet, TRet (*)(TFunArgs...), TArgs...>, static_cast<void*>(this->wrapperHelper));
-}
-
-template <typename TRet>
-void
-Thread::basic_constructor(TRet (*f)())
-{
-	this->wrapperHelper = new WrapperHelper;
-	this->wrapperHelper->funPtr = reinterpret_cast<void*&>(f);
+	this->wrapperHelper = new Thread::WrapperHelper;
+	this->wrapperHelper->funPtr = ptrCast<void*>(&pFun);
 	this->wrapperHelper->args = nullptr;
-	pthread_create(&this->thread, nullptr, Thread::BasicThreadWrapper<TRet>, static_cast<void*>(this->wrapperHelper));
+	this->wrapperHelper->objPtr = nullptr;
+	pthread_create(&this->thread, nullptr, Thread::ThreadWrapper<TFun>, this->wrapperHelper);
 }
 
-template <typename TRet>
-void
-Thread::voidptr_constructor(TRet (*f)(void*), void* arg)
+template <typename TFun, typename... TArgs>
+Thread::Thread(TFun pFun, TArgs&&... pArgs)
 {
-	this->wrapperHelper = new WrapperHelper;
-	this->wrapperHelper->funPtr = reinterpret_cast<void*&>(f);
-	this->wrapperHelper->args = arg;
-	pthread_create(&this->thread, nullptr, Thread::VoidptrThreadWrapper<TRet>, static_cast<void*>(this->wrapperHelper));
+	this->wrapperHelper = new Thread::WrapperHelper;
+	this->wrapperHelper->funPtr = ptrCast<void*>(&pFun);
+	this->wrapperHelper->args = ptrCast<void*>(new Package(Meta::Forward<TArgs>(pArgs)...));
+	this->wrapperHelper->objPtr = nullptr;
+	pthread_create(&this->thread, nullptr, Thread::ThreadWrapperVariadic<TFun, TArgs...>, this->wrapperHelper);
 }
 
-
-template <typename TObject, typename TRet, typename ... TFunArgs, typename ... TArgs>
-void
-Thread::constructor_methods(TRet (TObject::*&f)(TFunArgs ...), TObject* obj, TArgs ...args)
+template <typename TRet, class CObject>
+Thread::Thread(TRet (CObject::*pFun)(void), CObject* pObjInstance)
 {
-	this->wrapperHelper = new WrapperHelper;
-	this->wrapperHelper->funPtr = reinterpret_cast<void*&>(f);
-	this->wrapperHelper->args = new Package<TArgs...>(args...);
-	this->wrapperHelper->objPtr = static_cast<void*>(obj);
-	pthread_create(&this->thread, nullptr, Thread::ThreadWrapperMethods<TObject, TRet, TRet (TObject::*)(TFunArgs...), TArgs...>, static_cast<void*>(this->wrapperHelper));
+	this->wrapperHelper = new Thread::WrapperHelper;
+	this->wrapperHelper->funPtr = ptrCast<void*>(&pFun);
+	this->wrapperHelper->args = nullptr;
+	this->wrapperHelper->objPtr = pObjInstance;
+	pthread_create(&this->thread, nullptr, Thread::ThreadMethodWrapper<TRet (CObject::*)(void), CObject>, this->wrapperHelper);
 }
 
-template <typename TObject, typename TRet>
-void
-Thread::constructor_methods(TRet (TObject::*&f)(), TObject* obj)
+template <typename TRet, class CObject, typename... TFunArgs, typename... TArgs>
+Thread::Thread(TRet (CObject::*pFun)(TFunArgs...), CObject* pObjInstance, TArgs&&... pArgs)
 {
-	this->wrapperHelper = new WrapperHelper;
-	this->wrapperHelper->funPtr = reinterpret_cast<void*&>(f);
-	this->wrapperHelper->objPtr = static_cast<void*>(obj);
-	pthread_create(&this->thread, nullptr, Thread::ThreadWrapperMethodsNoArgs<TObject, TRet, TRet (TObject::*)()>, static_cast<void*>(this->wrapperHelper));
+	this->wrapperHelper = new Thread::WrapperHelper;
+	this->wrapperHelper->funPtr = ptrCast<void*>(&pFun);
+	this->wrapperHelper->args = ptrCast<void*>(new Package(Meta::Forward<TArgs>(pArgs)...));
+	this->wrapperHelper->objPtr = pObjInstance;
+	pthread_create(&this->thread, nullptr, Thread::ThreadMethodWrapperVariadic<TRet (CObject::*)(TFunArgs...), CObject, TArgs...>, this->wrapperHelper);
 }
 
-
-template <typename TObject, typename TRet, typename ... TFunArgs, typename ... TArgs>
-void
-Thread::constructor_methods(TRet (TObject::*&f)(TFunArgs ...) const, const TObject* obj, TArgs ...args)
-{
-	this->wrapperHelper = new WrapperHelper;
-	this->wrapperHelper->funPtr = reinterpret_cast<void*&>(f);
-	this->wrapperHelper->args = new Package<TArgs...>(args...);
-	this->wrapperHelper->objPtr = static_cast<void*>(obj);
-	pthread_create(&this->thread, nullptr, Thread::ThreadWrapperConstMethods<TObject, TRet, TRet (TObject::*)(TFunArgs...) const, TArgs...>, static_cast<void*>(this->wrapperHelper));
-}
-
-template <typename TObject, typename TRet>
-void
-Thread::constructor_methods(TRet (TObject::*&f)() const, const TObject* obj)
-{
-	this->wrapperHelper = new WrapperHelper;
-	this->wrapperHelper->funPtr = reinterpret_cast<void*&>(f);
-	this->wrapperHelper->objPtr = const_cast<void*>(static_cast<const void*>(obj));
-	pthread_create(&this->thread, nullptr, Thread::ThreadWrapperConstMethodsNoArgs<TObject, TRet, TRet (TObject::*)() const>, static_cast<void*>(this->wrapperHelper));
-}
-
-
-
-
-template <typename TRet, typename... TFunArgs>
-void
-Thread::constructor_for_callable(Callable<TRet(TFunArgs...)> funThread)
-{
-	this->wrapperHelper = new WrapperHelper;
-	this->wrapperHelper->funPtr = new Callable<TRet(TFunArgs...)>(funThread);
-	pthread_create(&this->thread, nullptr, Thread::BasicThreadWrapper_Callable<TRet, TFunArgs...>, static_cast<void*>(this->wrapperHelper));
-}
-
-void
-Thread::constructor_for_callable(letc funThread)
-{
-	this->wrapperHelper = new WrapperHelper;
-	this->wrapperHelper->funPtr = new letc(funThread);
-	pthread_create(&this->thread, nullptr, Thread::BasicThreadWrapper_LetCallable, static_cast<void*>(this->wrapperHelper));
-}
-
-#pragma endregion
-
-
-
-
-
-
-#pragma region ThreadWrapper
-
-template <typename TRet, typename TFun, typename... TArgs>
+template <typename TFun>
 void*
 Thread::ThreadWrapper(void* args)
 {
 	Thread::WrapperHelper*	helpingArgs = static_cast<Thread::WrapperHelper*>(args);
-	TFun					funPtr		= reinterpret_cast<TFun>(helpingArgs->funPtr);
-	Package<TArgs...>		*argsPack	= static_cast<Package<TArgs...>*>(helpingArgs->args);
-	Unpack::Apply(funPtr, *argsPack);
-	delete (argsPack);
+	TFun*					fun = reinterpret_cast<TFun*>(helpingArgs->funPtr);
+	(*fun)();
+	delete(helpingArgs);
+	return (nullptr);
+}
+
+template <typename TFun, typename... TArgs>
+void*
+Thread::ThreadWrapperVariadic(void* args)
+{
+	Thread::WrapperHelper*	helpingArgs = static_cast<Thread::WrapperHelper*>(args);
+	TFun*					fun = reinterpret_cast<TFun*>(helpingArgs->funPtr);
+	Package<TArgs...>*		pack = static_cast<Package<TArgs...>*>(helpingArgs->args);
+	Unpack::Apply(*fun, *pack);
+	delete(helpingArgs);
+	delete(pack);
+	return (nullptr);
+}
+
+template <typename TFun, class CObject>
+void*
+Thread::ThreadMethodWrapper(void* args)
+{
+	Thread::WrapperHelper*	helpingArgs	= static_cast<Thread::WrapperHelper*>(args);
+	TFun*					fun			= reinterpret_cast<TFun*>(helpingArgs->funPtr);
+	CObject*				instance	= static_cast<CObject*>(helpingArgs->objPtr);
+	(instance->*(*fun))();
 	delete (helpingArgs);
 	return (nullptr);
 }
 
-template <typename TRet>
+template <typename TFun, class CObject, typename... TArgs>
 void*
-Thread::BasicThreadWrapper(void* args)
+Thread::ThreadMethodWrapperVariadic(void* args)
 {
-	Thread::WrapperHelper*	helpingArgs = static_cast<Thread::WrapperHelper*>(args);
-	TRet (*funPtr)()					= reinterpret_cast<TRet (*)()>(helpingArgs->funPtr);
-	funPtr();
-	delete helpingArgs;
+	Thread::WrapperHelper*	helpingArgs	= static_cast<Thread::WrapperHelper*>(args);
+	TFun*					fun			= reinterpret_cast<TFun*>(helpingArgs->funPtr);
+	Package<TArgs...>*		pack		= static_cast<Package<TArgs...>*>(helpingArgs->args);
+	CObject*				instance	= static_cast<CObject*>(helpingArgs->objPtr);
+	Unpack::Apply(*fun, instance, *pack);
+	delete(helpingArgs);
+	delete(pack);
 	return (nullptr);
 }
-
-template <typename TRet>
-void*
-Thread::VoidptrThreadWrapper(void* args)
-{
-	Thread::WrapperHelper*	helpingArgs = static_cast<Thread::WrapperHelper*>(args);
-	TRet (*funPtr)(void*)				= reinterpret_cast<TRet (*)(void*)>(helpingArgs->funPtr);
-	funPtr(helpingArgs->args);
-	delete helpingArgs;
-	return (nullptr);
-}
-
-
-template <typename TObject, typename TRet, typename TFun, typename... TArgs>
-void*
-Thread::ThreadWrapperMethods(void* args)
-{
-	Thread::WrapperHelper*	helpingArgs 	= static_cast<Thread::WrapperHelper*>(args);
-	TObject*				classInstance	= static_cast<TObject*>(helpingArgs->objPtr);
-	TFun					funPtr			= reinterpret_cast<TFun>(reinterpret_cast<TFun&>(helpingArgs->funPtr));
-	Package<TArgs...>*		argsPack		= static_cast<Package<TArgs...>*>(helpingArgs->args);
-	Unpack::Apply(funPtr, classInstance, (*argsPack));
-	delete argsPack;
-	delete helpingArgs;
-	return (nullptr);
-}
-
-template <typename TObject, typename TRet, typename TFun, typename ... TArgs>
-void*
-Thread::ThreadWrapperConstMethods(void* args)
-{
-	Thread::WrapperHelper*	helpingArgs 	= static_cast<Thread::WrapperHelper*>(args);
-	const TObject*			classInstance	= static_cast<const TObject*>(helpingArgs->objPtr);
-	TFun					funPtr			= reinterpret_cast<TFun>(reinterpret_cast<TFun&>(helpingArgs->funPtr));
-	Package<TArgs...>*		argsPack		= static_cast<Package<TArgs...>*>(helpingArgs->args);
-	Unpack::Apply(funPtr, classInstance, (*argsPack));
-	delete argsPack;
-	delete helpingArgs;
-	return (nullptr);
-}
-
-template <typename TObject, typename TRet, typename TFun>
-void*
-Thread::ThreadWrapperMethodsNoArgs(void* args)
-{
-	Thread::WrapperHelper*	helpingArgs 	= static_cast<Thread::WrapperHelper*>(args);
-	TObject*				classInstance	= static_cast<TObject*>(helpingArgs->objPtr);
-	TFun					funPtr			= reinterpret_cast<TFun>(reinterpret_cast<TFun&>(helpingArgs->funPtr));
-	(classInstance->*funPtr)();
-	delete helpingArgs;
-	return (nullptr);
-}
-
-template <typename TObject, typename TRet, typename TFun>
-void*
-Thread::ThreadWrapperConstMethodsNoArgs(void* args)
-{
-	Thread::WrapperHelper*	helpingArgs 	= static_cast<Thread::WrapperHelper*>(args);
-	const TObject*			classInstance	= static_cast<const TObject*>(helpingArgs->objPtr);
-	TFun					funPtr			= reinterpret_cast<TFun>(reinterpret_cast<TFun&>(helpingArgs->funPtr));
-	(classInstance->*funPtr)();
-	delete helpingArgs;
-	return (nullptr);
-}
-
-template <typename TRet, typename... TFunArgs>
-void*
-Thread::BasicThreadWrapper_Callable(void* args)
-{
-	Thread::WrapperHelper*		helpingArgs	=	static_cast<Thread::WrapperHelper*>(args);
-	Callable<TRet, TFunArgs...>	funCallable	=	static_cast<Callable<TRet, TFunArgs...>>(helpingArgs->funPtr);
-	funCallable();
-	delete helpingArgs;
-	return (nullptr);
-}
-
-void*
-Thread::BasicThreadWrapper_LetCallable(void* args)
-{
-	Thread::WrapperHelper*	helpingArgs	=	static_cast<Thread::WrapperHelper*>(args);
-	letc*					funCallable	=	static_cast<letc*>(helpingArgs->funPtr);
-	(*funCallable)();
-	delete helpingArgs;
-	return (nullptr);
-}
-
-#pragma endregion
-
-
-
-
-#pragma region Methods
-
-#pragma endregion
-
 
 #endif

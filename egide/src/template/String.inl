@@ -10,40 +10,40 @@
 # include <cstring>
 
 bool
-String::Contains(const char* data) const
+String::Contains(const char* pData) const
 {
-	return (strstr(this->data, data) ? true : false);
+	return (strstr(this->data, pData) ? true : false);
 }
 
 bool
-String::Contains(const String& str) const
+String::Contains(const String& pStr) const
 {
-	return (strstr(this->data, str.data) ? true : false);
+	return (strstr(this->data, pStr.data) ? true : false);
 }
 
 #pragma region CompareWith
 int
-String::CompareWith(const char* data) const
+String::CompareWith(const char* pData) const
 {
-	return (strcmp(this->data, data));
+	return (strcmp(this->data, pData));
 }
 
 int
-String::CompareWith(const String& str) const
+String::CompareWith(const String& pStr) const
 {
-	return (strcmp(this->data, str.data));
+	return (strcmp(this->data, pStr.data));
 }
 
 int
-String::CompareNByteWith(const char* data, unsigned int n) const
+String::CompareNByteWith(const char* pData, unsigned int n) const
 {
-	return (strncmp(this->data, data, n));
+	return (strncmp(this->data, pData, n));
 }
 
 int
-String::CompareNByteWith(const String& str, unsigned int n) const
+String::CompareNByteWith(const String& pStr, unsigned int n) const
 {
-	return (strncmp(this->data, str.data, n));
+	return (strncmp(this->data, pStr.data, n));
 }
 #pragma endregion
 
@@ -54,9 +54,9 @@ String::CompareNByteWith(const String& str, unsigned int n) const
 
 #pragma region IsEqual
 bool
-String::IsEqualWith(const char* data) const
+String::IsEqualWith(const char* pData) const
 {
-	return (!strcmp(this->data, data));
+	return (!strcmp(this->data, pData));
 }
 
 bool
@@ -66,9 +66,9 @@ String::IsEqualWith(const String& str) const
 }
 
 bool
-String::IsNByteEqualWith(const char* data, unsigned int n) const
+String::IsNByteEqualWith(const char* pData, unsigned int n) const
 {
-	return (!strncmp(this->data, data, n));
+	return (!strncmp(this->data, pData, n));
 }
 
 bool
@@ -85,7 +85,7 @@ void
 String::Reserve(const uint64& nbyte)	noexcept
 {
 	char* const	ref = this->data;
-	this->data = Allocator<char>::Reserve(nbyte);//new char[nbyte];
+	this->data = new char[nbyte];
 	if (this->size > 0ULL)
 		String::__ncopy__(this->data, ref, this->size);
 	delete[](ref);
@@ -97,9 +97,9 @@ String::Reserve(const uint64& nbyte)	noexcept
 
 #pragma region Replace
 void
-String::Replace(const char* data) noexcept
+String::Replace(const char* pData) noexcept
 {
-	this->__replace__(data);
+	this->__replace__(pData);
 }
 
 void
@@ -109,9 +109,9 @@ String::Replace(const String& str) noexcept
 }
 
 void
-String::Overwrite(const char* data) noexcept
+String::Overwrite(const char* pData) noexcept
 {
-	this->__replace__(data);
+	this->__replace__(pData);
 }
 
 void
@@ -128,9 +128,9 @@ String::Overwrite(const String& str) noexcept
 
 #pragma region Strjoin
 void
-String::Join(const char* data) noexcept
+String::Join(const char* pData) noexcept
 {
-	this->__join__(data);
+	this->__join__(pData);
 }
 
 void
@@ -140,9 +140,9 @@ String::Join(const String& str) noexcept
 }
 
 void
-String::Append(const char* data) noexcept
+String::Append(const char* pData) noexcept
 {
-	this->__join__(data);
+	this->__join__(pData);
 }
 
 void
@@ -151,7 +151,7 @@ String::Append(const String& str) noexcept
 	this->__join__(str);
 }
 
-#include <iostream>
+//#include <iostream>
 void
 String::__join__(const String& str) noexcept
 {
@@ -164,8 +164,7 @@ String::__join__(const String& str) noexcept
 	if (totaLen > this->capacity)
 	{
 		this->capacity = totaLen * 2ULL;
-		this->data = Allocator<char>::Reserve(this->capacity + 1ULL, 32UL);
-		//this->data = new char[this->capacity + 1ULL];
+		this->data = new char[this->capacity + 1ULL];
 	}
 	else
 		this->allocated = false;
@@ -173,7 +172,7 @@ String::__join__(const String& str) noexcept
 	{
 		String::__ncopy__(this->data, ref, thisLen);
 		if (this->allocated)
-			Allocator<char>::Free(ref);
+			delete[](ref);
 	}
 	String::__ncopy__(&this->data[thisLen], str.data, dataLen);
 	this->data[totaLen] = '\0';
@@ -239,7 +238,7 @@ char*
 String::CString(const String& str) noexcept
 {
 	const uint64	size	= str.size;
-	char*			ret		= Allocator<char>::Reserve(size + 1ULL);//new char[size + 1ULL];
+	char*			ret		= new char[size + 1ULL];
 	String::__ncopy__(ret, str.data, size);
 	ret[size] = '\0';
 	return (ret);
@@ -248,10 +247,10 @@ String::CString(const String& str) noexcept
 char*
 String::CString() noexcept
 {
-	const uint64	size	= this->size;
-	char*			ret		= Allocator<char>::Reserve(size + 1ULL);//new char[size + 1ULL];
-	String::__ncopy__(ret, this->data, size);
-	ret[size] = '\0';
+	const uint64	lSize	= this->size;
+	char*			ret		= new char[size + 1ULL];
+	String::__ncopy__(ret, this->data, lSize);
+	ret[lSize] = '\0';
 	return (ret);
 }
 
@@ -303,7 +302,7 @@ void
 String::Clear() noexcept
 {
 	if (this->allocated && this->data)
-		Allocator<char>::Free(this->data);//delete[](this->data);
+		delete[](this->data);
 	this->allocated = false;
 	this->data = nullptr;
 	this->_setSize_(0ULL);
@@ -313,8 +312,7 @@ void
 String::Destroy() noexcept
 {
 	if (this->allocated && this->data)
-		Allocator<char>::Free(this->data);
-		//delete[](this->data);
+		delete[](this->data);
 	this->allocated = false;
 	this->data = nullptr;
 	this->_setSize_(0ULL);
@@ -337,9 +335,9 @@ String::__replace__(const String& str) noexcept
 	if (str.size > this->capacity)
 	{
 		if (this->allocated)
-			Allocator<char>::Free(this->data);//delete[](this->data);
+			delete[](this->data);
 		this->capacity = str.size * 2ULL;
-		this->data = Allocator<char>::Reserve(this->capacity + 1ULL);//new char[this->capacity + 1ULL];
+		this->data = new char[this->capacity + 1ULL];
 	}
 	//else if (this->capacity > STRING_capacity && str.size ) //Todo: faire un système d'auto-organisation de la mémoire
 	String::__ncopy__(this->data, str.data, this->size);

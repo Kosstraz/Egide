@@ -14,12 +14,12 @@ Socket::Socket(Socket&& socket) noexcept : fd_connected(Meta::Move(socket.fd_con
 	socket.core = Socket::Core();
 }
 
-Socket::Socket(SocketAddressFamily&& af, SocketType&& type, SocketProtocol&& protocol) noexcept : fd_connected(-1), bound(false), af(Meta::Move(af)), type(Meta::Move(type)), protocol(Meta::Move(protocol))
+Socket::Socket(SocketAddressFamily&& pAF, SocketType&& pType, SocketProtocol&& pProtocol) noexcept : fd_connected(-1), bound(false), af(Meta::Move(pAF)), type(Meta::Move(pType)), protocol(Meta::Move(pProtocol))
 {
 	this->fd = socket(static_cast<int>(this->af), static_cast<int>(this->type), static_cast<int>(this->protocol));
 }
 
-Socket::Socket(const SocketAddressFamily& af, const SocketType& type, const SocketProtocol& protocol) noexcept : fd_connected(-1), bound(false), af(af), type(type), protocol(protocol)
+Socket::Socket(const SocketAddressFamily& pAF, const SocketType& pType, const SocketProtocol& pProtocol) noexcept : fd_connected(-1), bound(false), af(pAF), type(pType), protocol(pProtocol)
 {
 	this->fd = socket(static_cast<int>(af), static_cast<int>(type), static_cast<int>(protocol));
 }

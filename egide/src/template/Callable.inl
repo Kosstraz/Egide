@@ -4,16 +4,16 @@
 # include "../Callable.hpp"
 
 template <typename TRet, typename... TArgs>
-Callable<TRet(TArgs...)>::Callable(Callable::FUNTYPE fun, TArgs... args)
-:	fun(fun),
-	args(Package<TArgs...>(Meta::Move(args)...))
+Callable<TRet(TArgs...)>::Callable(Callable::FUNTYPE pFun, TArgs... pArgs)
+:	fun(pFun),
+	args(Package<TArgs...>(Meta::Move(pArgs)...))
 {
 }
 
 template <typename TRet, typename... TArgs>
-Callable<TRet(TArgs...)>::Callable(Function<TRet(TArgs...)> fun, TArgs... args)
-:	fun(fun),
-	args(Package<TArgs...>(Meta::Move(args)...))
+Callable<TRet(TArgs...)>::Callable(Function<TRet(TArgs...)> pFun, TArgs... pArgs)
+:	fun(pFun),
+	args(Package<TArgs...>(Meta::Move(pArgs)...))
 {
 }
 

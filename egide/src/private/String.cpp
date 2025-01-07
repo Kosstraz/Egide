@@ -21,8 +21,7 @@ String::String(const char* data) : size(String::Size(data)), capacity(STRING_PRE
 {
 	if (this->size > this->capacity)
 		this->capacity = this->size * 2ULL;
-	this->data = Allocator<char>::Reserve(this->capacity + 1ULL, 32);
-	//this->data = new char[this->capacity + 1ULL];
+	this->data = new char[this->capacity + 1ULL];
 	String::__ncopy__(this->data, data, this->size);
 	this->data[this->size] = '\0';
 }

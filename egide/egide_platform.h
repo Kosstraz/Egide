@@ -33,6 +33,19 @@
 #  define MALLOC_ATTR
 # endif
 
+# ifndef cast
+#  define cast		static_cast
+# endif
+# ifndef ptrCast
+#  define ptrCast	reinterpret_cast
+# endif
+# ifndef polyCast
+#  define polyCast	dynamic_cast
+# endif
+# ifndef constCast
+#  define constCast	const_cast
+# endif
+
 # include <assert.h>
 
 typedef char				bool8;

@@ -13,9 +13,9 @@ ThreadQueue::ThreadQueueManager(ThreadQueue* tq) noexcept
 			tq->mtx.Unlock();
 			tq->mtx.WRLock();
 			tq->isPlayingNow = true;
-			Thread	t(tq->queue.Pop());
+			//Thread	t(tq->queue.Pop());
 			tq->mtx.Unlock();
-			t.Wait();
+			//t.Wait();
 			tq->mtx.WRLock();
 			tq->isPlayingNow = false;
 			tq->mtx.Unlock();
@@ -30,7 +30,7 @@ ThreadQueue::ThreadQueueManager(ThreadQueue* tq) noexcept
 ThreadQueue::ThreadQueue() noexcept :	canPlay(true), waitForDestroy(false),
 										isPlayingNow(true)
 {
-	this->manager = Thread(ThreadQueue::ThreadQueueManager, this);
+	//this->manager = Thread(ThreadQueue::ThreadQueueManager, this);
 }
 
 ThreadQueue::~ThreadQueue() noexcept

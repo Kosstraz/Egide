@@ -60,12 +60,12 @@ public:
 	/*	<<	*/
 	/********/
 
-	friend Streams&	operator<<(Streams& begin, const String& text)
+	friend Streams&	operator<<(Streams& begin, const String& pText)
 	{
 		if (begin.keep || begin.save)
-			begin.text.Join(text);
+			begin.text.Join(pText);
 		if (!begin.keep)
-			write(STDOUT_FILENO, text.Data(), text.Len());
+			write(STDOUT_FILENO, pText.Data(), pText.Len());
 		return (begin);
 	}
 

@@ -26,11 +26,11 @@ public:
 	{
 	}
 
-	constexpr	Trio(const T1& a, const T2& b, const T3& c) noexcept : a(_T1(a)), b(_T2(b)), c(_T3(c))
+	constexpr	Trio(const T1& pA, const T2& pB, const T3& pC) noexcept : a(_T1(pA)), b(_T2(pB)), c(_T3(pC))
 	{
 	}
 
-	constexpr	Trio(T1&& a, T2&& b, T3&& c) noexcept : a(Meta::Forward<T1>(a)), b(Meta::Forward<T2>(b)), c(Meta::Forward<T3>(c))
+	constexpr	Trio(T1&& pA, T2&& pB, T3&& pC) noexcept : a(Meta::Forward<T1>(pA)), b(Meta::Forward<T2>(pB)), c(Meta::Forward<T3>(pC))
 	{
 	}
 
